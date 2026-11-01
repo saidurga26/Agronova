@@ -1,0 +1,561 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agrononova | Farmers’ Marketplace</title>
+<meta name="description" content="A farmer-focused marketplace with crop listings, soil testing requests, local weather and farmer support.">
+<meta name="theme-color" content="#216b42">
+<style>
+:root {
+  --green: #216b42;
+  --dark: #163b29;
+  --light: #f3f7ef;
+  --gold: #e6b64c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #24352a;
+  background: #fff;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 7%;
+  border-bottom: 1px solid #e8eee7;
+}
+.logo { color: var(--green); font-size: 24px; font-weight: 800; }
+.logo span { color: #b18a2c; }
+nav { display: flex; align-items: center; gap: 20px; }
+a { color: inherit; text-decoration: none; }
+button, .button {
+  background: var(--green);
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 17px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover, .button:hover { background: var(--dark); }
+.hero {
+  background: var(--light);
+  padding: 65px 7%;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 35px;
+}
+.eyebrow {
+  color: var(--green);
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 12px;
+}
+h1 { font-size: clamp(36px, 5vw, 58px); line-height: 1.1; margin: 16px 0; }
+.hero p { font-size: 17px; line-height: 1.7; color: #59695e; }
+.hero img { width: 100%; border-radius: 18px; }
+section { padding: 45px 7%; }
+.section-head {
+  display: flex; justify-content: space-between;
+  align-items: center; gap: 15px; flex-wrap: wrap;
+}
+h2 { color: var(--dark); margin-top: 0; }
+.search {
+  display: flex; gap: 10px; margin: 22px 0;
+}
+input, select, textarea {
+  padding: 12px;
+  border: 1px solid #d5dfd5;
+  border-radius: 8px;
+  font: inherit;
+  width: 100%;
+  background: white;
+}
+.search input { flex: 1; min-width: 0; }
+.categories { display: flex; gap: 9px; flex-wrap: wrap; margin: 18px 0 25px; }
+.categories button { background: #edf4eb; color: var(--green); }
+.categories button.active { background: var(--green); color: white; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.crop {
+  border: 1px solid #e4eae1;
+  border-radius: 13px;
+  overflow: hidden;
+}
+.crop img { width: 100%; height: 180px; object-fit: cover; background: var(--light); }
+.crop-info { padding: 16px; }
+.crop h3 { margin: 5px 0 10px; }
+.muted { color: #718074; font-size: 13px; }
+.price { font-size: 21px; font-weight: 800; color: var(--green); margin: 12px 0; }
+.crop-info button { width: 100%; }
+.steps {
+  background: var(--light);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.step { padding: 18px; background: white; border-radius: 12px; }
+.step b { color: var(--green); }
+footer {
+  padding: 28px 7%;
+  background: var(--dark);
+  color: white;
+}
+footer p { color: #d3e2d5; }
+dialog {
+  border: 0; border-radius: 15px; padding: 25px;
+  width: min(460px, 92%); box-shadow: 0 15px 60px #0003;
+}
+dialog::backdrop { background: #10291c99; }
+form { display: grid; gap: 12px; }
+.form-actions { display: flex; gap: 10px; }
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+.service-card {
+  border: 1px solid #e4eae1;
+  border-radius: 14px;
+  padding: 22px;
+  background: #fff;
+  box-shadow: 0 5px 20px #163b2908;
+}
+.service-card h2 { margin-bottom: 8px; }
+.service-card p { line-height: 1.6; }
+.service-card form { margin-top: 18px; }
+.service-card label { font-size: 14px; font-weight: 700; color: var(--dark); }
+.service-card button { width: 100%; }
+.notice {
+  margin-top: 14px;
+  padding: 13px;
+  background: var(--light);
+  border-radius: 9px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+.chat-window {
+  border: 1px solid #e4eae1;
+  border-radius: 10px;
+  padding: 12px;
+  height: 230px;
+  overflow-y: auto;
+  background: #fbfcfa;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.chat-message { padding: 10px 12px; border-radius: 10px; max-width: 90%; line-height: 1.45; }
+.chat-message.bot { background: #edf4eb; align-self: flex-start; }
+.chat-message.user { background: var(--green); color: white; align-self: flex-end; }
+.chat-compose { display: flex; gap: 8px; margin-top: 10px; }
+.chat-compose input { min-width: 0; }
+.chat-compose button { width: auto; }
+@media(max-width: 750px) {
+  .service-grid { grid-template-columns: 1fr; }
+  nav { flex-wrap: wrap; justify-content: flex-end; }
+}
+@media(max-width: 750px) {
+  header { padding: 16px 5%; }
+  nav { gap: 10px; }
+  nav a:not(.button) { display: none; }
+  .hero { grid-template-columns: 1fr; padding: 42px 6%; }
+  section { padding: 35px 6%; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .crop img { height: 130px; }
+  .crop-info { padding: 11px; }
+  .steps { grid-template-columns: 1fr; }
+}
+@media(max-width: 420px) {
+  .grid { grid-template-columns: 1fr; }
+  .search { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#">🌱 Agro<span>nonova</span></a>
+  <nav>
+    <a href="#market">Explore crops</a>
+    <a href="#how">How it works</a>
+    <a href="#soil-testing">Soil testing</a>
+    <a href="#weather">Weather</a>
+    <a href="#help-chat">Help chat</a>
+    <button onclick="showFarmerForm()">+ Sell crops</button>
+  </nav>
+</header>
+
+<main>
+<div class="hero">
+  <div>
+    <div class="eyebrow">A MARKETPLACE THAT GROWS WITH YOU</div>
+    <h1>Your harvest.<br>Your price.<br>Your market.</h1>
+    <p>Discover fresh crops directly from farmers.
+       Find buyers for your harvest and bring the
+       agricultural community closer together.</p>
+    <a class="button" href="#market">Explore crops →</a>
+    <button onclick="showFarmerForm()">List your crop</button>
+  </div>
+  <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80"
+       alt="Green agricultural fields">
+</div>
+
+<section id="market">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">THE MARKETPLACE</div>
+      <h2>Explore available crops</h2>
+    </div>
+    <span class="muted" id="count"></span>
+  </div>
+  <div class="search">
+    <input id="search" placeholder="Search rice, cotton, chilli..."
+      oninput="renderCrops()" aria-label="Search crops">
+    <select id="location" onchange="renderCrops()" aria-label="Filter by location">
+      <option value="">All locations</option>
+      <option>Andhra Pradesh</option>
+      <option>Telangana</option>
+      <option>Karnataka</option>
+      <option>Maharashtra</option>
+    </select>
+  </div>
+  <div class="categories" id="categories"></div>
+  <div class="grid" id="crops"></div>
+</section>
+
+<section class="steps" id="how">
+  <div class="step"><b>01 — Farmers</b><h3>List your harvest</h3>
+    <p class="muted">Add your crop, quantity, price, and location.</p></div>
+  <div class="step"><b>02 — Buyers</b><h3>Discover crops</h3>
+    <p class="muted">Search listings and find crops that fit your needs.</p></div>
+  <div class="step"><b>03 — Connect</b><h3>Discuss the deal</h3>
+    <p class="muted">Contact the seller to discuss availability and delivery.</p></div>
+</section>
+</main>
+
+<section id="farmer-services">
+  <div class="eyebrow">FARMER SUPPORT SERVICES</div>
+  <h2>More support for your farm</h2>
+  <p class="muted">Request a soil-testing appointment, check a sample weather advisory, or ask the help assistant a question.</p>
+  <div class="service-grid">
+    <article class="service-card" id="soil-testing">
+      <div class="eyebrow">SERVICE 01</div>
+      <h2>🧪 Book soil testing</h2>
+      <p class="muted">Request a convenient appointment to test your soil. This demo records your request on this page only; it does not send it to a laboratory.</p>
+      <form id="soilForm">
+        <label for="farmerName">Farmer name</label>
+        <input id="farmerName" name="farmerName" placeholder="Enter your name" required>
+        <label for="soilPhone">Mobile number</label>
+        <input id="soilPhone" name="phone" type="tel" placeholder="Enter contact number" required>
+        <label for="soilLocation">Village / district</label>
+        <input id="soilLocation" name="location" placeholder="e.g. Guntur, Andhra Pradesh" required>
+        <label for="soilType">Soil / crop details</label>
+        <select id="soilType" name="soilType" required>
+          <option value="">Choose a crop or soil need</option>
+          <option>Rice field</option>
+          <option>Chilli field</option>
+          <option>Cotton field</option>
+          <option>Vegetable field</option>
+          <option>General soil health check</option>
+        </select>
+        <label for="soilDate">Preferred date</label>
+        <input id="soilDate" name="date" type="date" required>
+        <label for="soilSlot">Preferred time slot</label>
+        <select id="soilSlot" name="slot" required>
+          <option value="">Choose a time slot</option>
+          <option>9:00 AM – 11:00 AM</option>
+          <option>11:00 AM – 1:00 PM</option>
+          <option>2:00 PM – 4:00 PM</option>
+        </select>
+        <button type="submit">Request soil test slot</button>
+      </form>
+      <div id="soilConfirmation" class="notice" role="status" hidden></div>
+    </article>
+
+    <article class="service-card" id="weather">
+      <div class="eyebrow">SERVICE 02</div>
+      <h2>🌦️ Weather reporting</h2>
+      <p class="muted">Choose your location and crop to view a sample farming advisory. Live weather data is not connected in this demo.</p>
+      <form id="weatherForm">
+        <label for="weatherLocation">Village / district</label>
+        <input id="weatherLocation" name="location" placeholder="e.g. Vijayawada" required>
+        <label for="weatherCrop">Crop</label>
+        <select id="weatherCrop" name="crop" required>
+          <option value="">Choose your crop</option>
+          <option>Rice</option>
+          <option>Chilli</option>
+          <option>Cotton</option>
+          <option>Maize</option>
+          <option>Vegetables</option>
+          <option>Other</option>
+        </select>
+        <label for="weatherCondition">Current field condition</label>
+        <select id="weatherCondition" name="condition" required>
+          <option value="">Choose the condition</option>
+          <option value="sunny">Sunny / hot</option>
+          <option value="cloudy">Cloudy</option>
+          <option value="rain">Rain expected / raining</option>
+          <option value="dry">Dry soil</option>
+          <option value="waterlogged">Waterlogged field</option>
+        </select>
+        <button type="submit">Get farming advisory</button>
+      </form>
+      <div id="weatherResult" class="notice" role="status" hidden></div>
+    </article>
+
+    <article class="service-card" id="help-chat" style="grid-column: 1 / -1;">
+      <div class="eyebrow">SERVICE 03</div>
+      <h2>💬 Farmer help chat</h2>
+      <p class="muted">Ask about using the marketplace, soil-test booking, weather advisories, or listing a crop. This is a basic demo assistant with preset answers.</p>
+      <div class="chat-window" id="chatWindow" role="log" aria-live="polite">
+        <div class="chat-message bot">Hello, farmer! How can I help? Try asking “How do I book a soil test?” or “How do I list a crop?”</div>
+      </div>
+      <form id="chatForm" class="chat-compose">
+        <input id="chatInput" placeholder="Type your question..." aria-label="Type your question" required>
+        <button type="submit">Send</button>
+      </form>
+    </article>
+  </div>
+</section>
+
+
+<section id="app-status" style="padding-top:20px;padding-bottom:25px;background:#f3f7ef">
+  <div class="eyebrow">PROJECT STATUS</div>
+  <h2>Ready to connect your farm community</h2>
+  <p class="muted">This starter can be hosted as a website. The weather panel uses live forecast data when the weather service is reachable. Crop listings and soil requests currently run in the browser; follow the included setup guide to connect Supabase for shared, persistent records and farmer sign-in.</p>
+</section>
+
+<footer>
+  <div class="logo" style="color:white">🌱 Agrononova</div>
+  <p>Helping farmers reach more buyers.</p>
+  <small>Farmer marketplace starter · Sample listings are illustrative. Configure Supabase to store accounts, crops and bookings online.</small>
+</footer>
+
+<dialog id="farmerDialog">
+  <h2>List your crop</h2>
+  <p class="muted">Enter details to add a sample listing to this page.</p>
+  <form id="cropForm">
+    <input name="name" placeholder="Crop name (e.g. Rice)" required>
+    <input name="price" type="number" min="1" placeholder="Price per quintal (₹)" required>
+    <input name="quantity" type="number" min="1" placeholder="Available quantity (quintals)" required>
+    <select name="location" required>
+      <option value="">Choose state</option>
+      <option>Andhra Pradesh</option>
+      <option>Telangana</option>
+      <option>Karnataka</option>
+      <option>Maharashtra</option>
+    </select>
+    <input name="phone" type="tel" placeholder="Contact number (optional)">
+    <div class="form-actions">
+      <button type="submit">Add listing</button>
+      <button type="button" onclick="farmerDialog.close()"
+        style="background:#68756b">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const sampleCrops = [
+ {name:"Rice",category:"Grains",price:2400,quantity:25,
+  location:"Andhra Pradesh",emoji:"🌾",
+  image:"https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=600&q=80"},
+ {name:"Red Chilli",category:"Spices",price:8500,quantity:8,
+  location:"Andhra Pradesh",emoji:"🌶️",
+  image:"https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=600&q=80"},
+ {name:"Cotton",category:"Other",price:7000,quantity:30,
+  location:"Telangana",emoji:"☁️",
+  image:"https://images.unsplash.com/photo-1594911772123-4b6fa2b3c0f1?auto=format&fit=crop&w=600&q=80"},
+ {name:"Maize",category:"Grains",price:2200,quantity:18,
+  location:"Karnataka",emoji:"🌽",
+  image:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=600&q=80"},
+ {name:"Tomatoes",category:"Vegetables",price:1500,quantity:10,
+  location:"Maharashtra",emoji:"🍅",
+  image:"https://images.unsplash.com/photo-1546094096-0df4bcaaa337?auto=format&fit=crop&w=600&q=80"},
+ {name:"Wheat",category:"Grains",price:2600,quantity:20,
+  location:"Maharashtra",emoji:"🌾",
+  image:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80"}
+];
+let crops = [...sampleCrops];
+let category = "All";
+const categories = ["All","Grains","Spices","Vegetables","Other"];
+
+document.getElementById("categories").innerHTML =
+ categories.map(c => `<button class="${c==="All"?"active":""}"
+ onclick="setCategory('${c}',this)">${c}</button>`).join("");
+
+function setCategory(c,button) {
+ category=c;
+ document.querySelectorAll(".categories button")
+   .forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");
+ renderCrops();
+}
+
+function renderCrops() {
+ const q=document.getElementById("search").value.toLowerCase();
+ const loc=document.getElementById("location").value;
+ const filtered=crops.filter(c=>
+  c.name.toLowerCase().includes(q) &&
+  (category==="All"||c.category===category) &&
+  (!loc||c.location===loc)
+ );
+ document.getElementById("count").textContent=filtered.length+" listings";
+ document.getElementById("crops").innerHTML=filtered.length
+ ? filtered.map((c,i)=>`
+  <article class="crop">
+   <img src="${c.image||""}" alt="${c.name}"
+    onerror="this.style.display='none'">
+   <div class="crop-info">
+    <div class="muted">${c.location}</div>
+    <h3>${escapeHTML(c.name)}</h3>
+    <div class="muted">${c.quantity} quintals available</div>
+    <div class="price">₹${Number(c.price).toLocaleString("en-IN")}
+      <span class="muted">/ quintal</span></div>
+    <button onclick="contactSeller(${crops.indexOf(c)})">Contact seller</button>
+   </div>
+  </article>`).join("")
+ : "<p>No crops found. Try another search.</p>";
+}
+
+function escapeHTML(s) {
+ return String(s).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+function showFarmerForm() {
+ document.getElementById("farmerDialog").showModal();
+}
+document.getElementById("cropForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const f=new FormData(e.target);
+ const name=String(f.get("name")).trim();
+ if(!name) return;
+ crops.unshift({
+  name,category:"Other",
+  price:Number(f.get("price")),
+  quantity:Number(f.get("quantity")),
+  location:f.get("location"),
+  phone:String(f.get("phone")||""),
+  image:""
+ });
+ document.getElementById("search").value="";
+ document.getElementById("location").value="";
+ category="All";
+ document.querySelectorAll(".categories button")
+  .forEach(b=>b.classList.toggle("active",b.textContent==="All"));
+ renderCrops();
+ e.target.reset();
+ document.getElementById("farmerDialog").close();
+ document.getElementById("market").scrollIntoView({behavior:"smooth"});
+});
+function contactSeller(i) {
+ const c=crops[i];
+ if(c.phone) {
+  alert("Seller contact: "+c.phone+
+   "\nCrop: "+c.name+
+   "\nPlease verify the seller and agree on terms before payment.");
+ } else {
+  alert("Crop: "+c.name+
+   "\nLocation: "+c.location+
+   "\nA seller contact system will be connected in a future version.");
+ }
+}
+// Soil-test appointment demo: requests are shown on-screen only.
+document.getElementById("soilDate").min = new Date().toISOString().split("T")[0];
+document.getElementById("soilForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const confirmation = document.getElementById("soilConfirmation");
+  confirmation.textContent =
+    "Demo booking request created!\\nFarmer: " + f.get("farmerName") +
+    "\\nLocation: " + f.get("location") +
+    "\\nNeed: " + f.get("soilType") +
+    "\\nPreferred slot: " + f.get("date") + ", " + f.get("slot") +
+    "\\nPlease contact a local soil-testing laboratory or agriculture office to confirm an actual appointment.";
+  confirmation.hidden = false;
+});
+
+// Live weather demo powered by Open-Meteo (no API key required).
+document.getElementById("weatherForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const result = document.getElementById("weatherResult");
+  const place = String(f.get("location")).trim();
+  result.hidden = false;
+  result.textContent = "Looking up weather for " + place + "…";
+  try {
+    const geoResponse = await fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(place) + "&count=1&language=en&format=json");
+    if (!geoResponse.ok) throw new Error("Location lookup failed");
+    const geo = await geoResponse.json();
+    if (!geo.results || !geo.results.length) throw new Error("Location not found. Try a nearby town or district name.");
+    const p = geo.results[0];
+    const wxResponse = await fetch("https://api.open-meteo.com/v1/forecast?latitude=" + p.latitude + "&longitude=" + p.longitude + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=3");
+    if (!wxResponse.ok) throw new Error("Weather service unavailable");
+    const wx = await wxResponse.json();
+    const current = wx.current;
+    const daily = wx.daily;
+    const codeText = code => ({0:"Clear sky",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Depositing rime fog",51:"Light drizzle",53:"Drizzle",55:"Dense drizzle",61:"Slight rain",63:"Moderate rain",65:"Heavy rain",71:"Slight snow",73:"Moderate snow",75:"Heavy snow",80:"Rain showers",81:"Moderate rain showers",82:"Heavy rain showers",95:"Thunderstorm",96:"Thunderstorm with hail",99:"Severe thunderstorm"}[code] || "Variable conditions");
+    const tips = {
+      "Rice":"Check field water levels and local rain forecasts before irrigation.",
+      "Chilli":"Avoid spraying during rain or strong wind; monitor for disease in humid conditions.",
+      "Cotton":"Inspect soil moisture and follow local pest advisories before spraying.",
+      "Maize":"Check soil moisture and ensure drainage after heavy rain.",
+      "Vegetables":"Water according to soil moisture and protect crops from heavy rain where practical.",
+      "Other":"Use the forecast alongside advice from your local agricultural extension office."
+    };
+    result.textContent = "Live weather for " + p.name + (p.admin1 ? ", " + p.admin1 : "") +
+      "\\nNow: " + Math.round(current.temperature_2m) + "°C (feels like " + Math.round(current.apparent_temperature) + "°C), " + codeText(current.weather_code) +
+      "\\nHumidity: " + current.relative_humidity_2m + "% · Wind: " + current.wind_speed_10m + " km/h · Precipitation: " + current.precipitation + " mm" +
+      "\\n\\n3-day outlook:\\n" + daily.time.map((day,i) => day + ": " + Math.round(daily.temperature_2m_min[i]) + "–" + Math.round(daily.temperature_2m_max[i]) + "°C; rain chance up to " + (daily.precipitation_probability_max[i] ?? "—") + "%").join("\\n") +
+      "\\n\\nCrop note (" + f.get("crop") + "): " + (tips[f.get("crop")] || tips.Other) +
+      "\\n\\nWeather provided by Open-Meteo. Forecasts are estimates; follow official local alerts and agricultural guidance.";
+  } catch (err) {
+    result.textContent = "Could not load live weather: " + err.message + "\\nTry a more specific nearby town or district. If the service is unavailable, check an official weather service.";
+  }
+});
+
+function addChatMessage(text, type) {
+  const windowEl = document.getElementById("chatWindow");
+  const message = document.createElement("div");
+  message.className = "chat-message " + type;
+  message.textContent = text;
+  windowEl.appendChild(message);
+  windowEl.scrollTop = windowEl.scrollHeight;
+}
+document.getElementById("chatForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const input = document.getElementById("chatInput");
+  const question = input.value.trim();
+  if (!question) return;
+  addChatMessage(question, "user");
+  const q = question.toLowerCase();
+  let answer;
+  if (q.includes("soil") || q.includes("test") || q.includes("slot") || q.includes("book")) {
+    answer = "Open “Book soil testing”, enter your name, contact number, location, crop details, date and preferred time. This demo shows a request but does not contact a lab, so please confirm with a local soil-testing laboratory or agriculture office.";
+  } else if (q.includes("weather") || q.includes("rain") || q.includes("forecast")) {
+    answer = "Open “Weather reporting”, choose your location, crop and observed field condition for a sample advisory. It is not a live forecast; check an official weather service for current conditions and alerts.";
+  } else if (q.includes("crop") || q.includes("sell") || q.includes("list") || q.includes("price")) {
+    answer = "Use “Sell crops” or “List your crop” to enter crop name, price, quantity and location. The sample listing is added to this page only.";
+  } else if (q.includes("contact") || q.includes("buyer") || q.includes("seller")) {
+    answer = "Select “Contact seller” on a crop card to see the demo contact information. Some sample listings do not have a phone number yet.";
+  } else if (q.includes("hello") || q.includes("hi")) {
+    answer = "Hello! I can help with crop listings, soil-test booking and the sample weather advisory. What would you like to know?";
+  } else {
+    answer = "I can help with crop listings, soil-test booking and weather advisories. Try asking “How do I book a soil test?” or “How do I list a crop?”";
+  }
+  addChatMessage(answer, "bot");
+  input.value = "";
+});
+renderCrops();
+</script>
+</body>
+</html>
